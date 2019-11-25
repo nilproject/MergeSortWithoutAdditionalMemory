@@ -8,26 +8,26 @@ namespace sandbox
         static void Main(string[] args)
         {
             var random = new Random(777);
-            var bytes = new byte[20000000];
+            var bytes = new byte[20];
             random.NextBytes(bytes);
             var i = 0;
 
-            var a = bytes.GroupBy(x => i++ / 4).Select(x => x.Aggregate(0, (res, b) => (res << 8) + b)).ToArray();
+            var a = bytes.GroupBy(x => i++ / 1).Select(x => x.Aggregate(0, (res, b) => (res << 8) + b)).ToArray();
             Array.Sort(a);
 
-            a = bytes.GroupBy(x => i++ / 4).Select(x => x.Aggregate(0, (res, b) => (res << 8) + b)).ToArray();
+            a = bytes.GroupBy(x => i++ / 1).Select(x => x.Aggregate(0, (res, b) => (res << 8) + b)).ToArray();
             sort(a, 0, a.Length - 1);
         }
 
         private static void sort(int[] array, int start, int end)
         {
-            for (var i = start; i < end; i += 2)
+            for (var i = start + 1; i < end; i += 2)
             {
-                if (array[i] > array[i + 1])
+                if (array[i - 1] > array[i])
                 {
-                    var t = array[i + 1];
-                    array[i + 1] = array[i];
-                    array[i] = t;
+                    var t = array[i];
+                    array[i] = array[i - 1];
+                    array[i - 1] = t;
                 }
             }
 
@@ -39,7 +39,7 @@ namespace sandbox
                 {
                     merge(array, i, i + d, Math.Min(end, i + d * 2 - 1));
 
-                    //validate(array, i, Math.Min(end, i + d * 2 - 1));
+                    validate(array, i, Math.Min(end, i + d * 2 - 1));
                 }
 
                 d *= 2;
@@ -94,8 +94,11 @@ namespace sandbox
                     if (s0 >= middle && moved)
                     {
                         if (s1 <= end)
-                            merge(array, middle, s1, end);
-                        return;
+                        {
+                            s0 = middle;
+                            middle = s1;
+                            continue;
+                        }
                     }
 
                     if (middle > s0)
